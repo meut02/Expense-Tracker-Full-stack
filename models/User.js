@@ -22,7 +22,6 @@ email:{
 
 password:{
   type:Sequelize.STRING,
-  unique:true
 }
 
 });

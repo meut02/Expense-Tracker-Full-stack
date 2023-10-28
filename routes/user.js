@@ -9,6 +9,8 @@ const router=express.Router();
 
 router.post('/Add-user',userController.adduser)
 
+router.post('/login',userController.login)
+
 router.get('/Get-user',userController.getuser)
 
 router.delete('/Delete-user/:id',userController.deleteuser)

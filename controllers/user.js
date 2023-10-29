@@ -1,5 +1,7 @@
 const User=require('../models/User')
 
+const bcrypt=require('bcrypt')
+
 exports.adduser=(async(req,res,next)=>{
     try{
     const name=req.body.Name;
@@ -18,10 +20,13 @@ exports.adduser=(async(req,res,next)=>{
         error: 'User already exists. Please choose a different email.'
       });
     }*/
-
-  
-    const data= await User.create({name:name,email:email,password:password})
-    res.status(201).json({newuserdetails:data});
+    const saltround=10
+    bcrypt.hash(password,saltround,async(err,hash)=>{
+      console.log(err)
+      const data= await User.create({name,email,password:hash})
+      res.status(201).json({newuserdetails:data})
+    })  
+   ;
     }
     catch(err){
       res.status(500).json({
@@ -35,15 +40,20 @@ exports.adduser=(async(req,res,next)=>{
 
     try{
       const user=await User.findOne({where:{email:Email}})
-
+      
       if(user){
-       if(user.password==Password)
-        {
-          res.status(200).json({message:'user log in succesfull'})
-      }
-     else{
-        res.status(401).json({error:'Invald Credentials'})
-      }
+        bcrypt.compare(Password,user.password,(err,result)=>{
+          if(!err && result)
+          {
+            
+            res.status(200).json({message:'user log in succesfull'})
+        }
+       else{
+          res.status(401).json({error:'Invald Credentials'})
+        }
+
+        })
+      
     }
     else{
       res.status(404).json({error:'User Not Found'})

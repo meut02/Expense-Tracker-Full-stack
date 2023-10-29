@@ -1,5 +1,7 @@
 const User=require('../models/User')
 
+const Expense=require('../models/Expense')
+
 const bcrypt=require('bcrypt')
 
 exports.adduser=(async(req,res,next)=>{
@@ -65,26 +67,41 @@ exports.adduser=(async(req,res,next)=>{
   }
   }
 
-
-  exports.getuser=(async(req,res,next)=>{
+  exports.addexpense=(async(req,res)=>{
     try{
-    const users=await User.findAll()
-    res.status(200).json({allusers:users})
+      const price=req.body.Price
+      const name=req.body.Name
+      const category=req.body.Category
+
+      const expense=await Expense.create({price,name,category})
+      res.status(201).json({expense:expense})
+    }
+    catch(err){
+        res.status(500).json({err:err})
+    }
+  })
+
+
+
+  exports.getexpense=(async(req,res,next)=>{
+    try{
+    const expense=await Expense.findAll()
+    res.status(200).json({allexpense:expense})
     }
     catch(err){
       res.status(500).json({error:err})
     }
   })
 
-  exports.deleteuser=(async(req,res,next)=>{
+  exports.deletexpense=(async(req,res,next)=>{
     try{
       if(req.params.id=='undefined')
       {
        return res.status(400).json({err:'id is missing'})
       }
     const uid=req.params.id
-    await User.destroy({where:{id:uid}})
-    res.sendStatus(200);
+    const expensedeleted=await Expense.destroy({where:{id:uid}})
+    res.status(200).json({message:expensedeleted});
     }
     catch(err){
       console.log(err)

@@ -11,10 +11,13 @@ app.use(cors());
 const User = require('./models/User');
 
 const userRoutes= require('./routes/user');
+const tableRoutes=require('./routes/expense')
 
 app.use(bodyParser.json());
 
-app.use('/User',userRoutes)
+app.use('/User',userRoutes);
+
+app.use('/Expense',tableRoutes)
 
 
 app.use(errorController.get404);
